@@ -78,7 +78,13 @@ def load_model():
     base_dir = os.path.dirname(__file__)
     model_path = os.path.join(base_dir, 'models', 'churn_pipeline.pkl')
     if os.path.exists(model_path):
-        return joblib.load(model_path)
+        try:
+            return joblib.load(model_path)
+        except Exception as e:
+            import subprocess
+            script_path = os.path.join(base_dir, 'src', 'generate_churn_data.py')
+            subprocess.run(["python", script_path], check=True)
+            return joblib.load(model_path)
     return None
 
 @st.cache_data
